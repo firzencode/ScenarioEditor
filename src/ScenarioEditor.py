@@ -1,4 +1,5 @@
 import wx,os
+import xml.etree.ElementTree as ET
 
 class MainWindow(wx.Frame):
 	def __init__(self, parent, title):
@@ -62,11 +63,13 @@ class MainWindow(wx.Frame):
 	def OnTest(self, event):
 		self.scenario.action_list.append("ya")
 		print self.scenario.action_list
+		self.scenario_list.Set(self.scenario.action_list)
 class ScenarioObject:
 	def __init__(self):
 		self.action_list = []
 	def Load(self, path):
 		print "load file path:",path
+		tree = ET.parse(path) 
 		return False
 	def Save(self, path):
 		print "save file path:", path
