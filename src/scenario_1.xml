@@ -3,37 +3,10 @@
 	<def_actor actor_id="2" actor_name="human02"/>
 	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
 	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	<dialog actor_id="1">I say heyyyyyyyyyyyyyyyyyy</dialog>
-	<dialog actor_id="2">Yeaaaaaaaaaaaaa</dialog>
-	
+	<dialog actor_id="1">Dialog__001</dialog>
+	<dialog actor_id="1">Dialog__002</dialog>
+	<dialog actor_id="1">Dialog__003</dialog>
+	<dialog actor_id="1">Dialog__004</dialog>
 	<set>
 		<action/>
 		<action/>

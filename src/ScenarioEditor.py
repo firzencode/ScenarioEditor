@@ -46,13 +46,19 @@ class MainWindow(wx.Frame):
 		# Movement 
 		btn_action_moveup = wx.Button(panel, -1, "Up")
 		btn_action_movedown = wx.Button(panel,-1, "Down")
+		text_scenario_uid = wx.StaticText(panel,label = "UID")
+		self.textctrl_scenario_uid = wx.TextCtrl(panel, value = self.scenario.uid)
+		
 		sizer_movement = wx.BoxSizer(wx.HORIZONTAL)
 		sizer_movement.Add(btn_action_moveup, flag = wx.ALL, border = 5)
 		sizer_movement.Add(btn_action_movedown, flag = wx.ALL, border = 5)
+		sizer_movement.Add(text_scenario_uid, flag = wx.ALL | wx.CENTER, border = 5)
+		sizer_movement.Add(self.textctrl_scenario_uid, flag = wx.ALL, border = 5)
 		
 		# Add / Remove
 		btn_action_addaction = wx.Button(panel,-1,"Add Action")
 		btn_action_removeaction = wx.Button(panel,-1, "Remove Action")
+		
 		sizer_add_remove = wx.BoxSizer(wx.HORIZONTAL)	
 		sizer_add_remove.Add(btn_action_addaction, flag = wx.ALL, border = 5)
 		sizer_add_remove.Add(btn_action_removeaction, flag = wx.ALL, border = 5)
@@ -70,6 +76,7 @@ class MainWindow(wx.Frame):
 		self.Bind(wx.EVT_BUTTON, self.OnActionAdd, btn_action_addaction)
 		self.Bind(wx.EVT_BUTTON, self.OnActionRemove, btn_action_removeaction)
 		self.Bind(wx.EVT_LISTBOX, self.OnListboxSelectChanged, self.scenario_listbox)
+		self.Bind(wx.EVT_TEXT, self.OnUidChanged, self.textctrl_scenario_uid)
 	#---------- Init Widget DefActor ----------
 	def InitWidgets_DefActor(self, panel, parent_sizer):
 		#sizer = wx.FlexGridSizer(cols=2, hgap=6, vgap=6)
@@ -144,10 +151,12 @@ class MainWindow(wx.Frame):
 		if result == wx.ID_YES:
 			if self.OnMenuSave(event):
 				self.scenario.Reset()
-				self.scenario_listbox.Set(self.scenario.GetListboxArray())
+				#self.scenario_listbox.Set(self.scenario.GetListboxArray())
+				self.RefreshList()
 		elif result == wx.ID_NO:
 			self.scenario.Reset()
-			self.scenario_listbox.Set(self.scenario.GetListboxArray())
+			#self.scenario_listbox.Set(self.scenario.GetListboxArray())
+			self.RefreshList()
 			pass
 		elif result == wx.ID_CANCEL:
 			pass
@@ -180,16 +189,65 @@ class MainWindow(wx.Frame):
 			self.Destroy()
 		dlg.Destroy()
 	def OnActionMoveUp(self, event):
-		pass
+		selections = self.scenario_listbox.GetSelections()
+		if len(selections) > 0:
+			index = selections[0]
+			if index > 0:
+				# swap action
+				self.scenario.action_list[index-1], self.scenario.action_list[index] \
+				= self.scenario.action_list[index], self.scenario.action_list[index - 1]
+				
+				# swap list item
+				item_list = self.scenario_listbox.GetItems()
+				item_list[index - 1], item_list[index] = item_list[index], item_list[index - 1]
+				self.scenario_listbox.SetItems(item_list)
+				
+				# change selected item
+				self.scenario_listbox.Select(index - 1)
 	def OnActionMoveDown(self, event):
+		selections = self.scenario_listbox.GetSelections()
+		if len(selections) > 0:
+			index = selections[0]
+			if index < self.scenario_listbox.GetCount() - 1:
+				# swap action
+				self.scenario.action_list[index + 1], self.scenario.action_list[index] \
+				= self.scenario.action_list[index], self.scenario.action_list[index + 1]
+				
+				#swap list item
+				item_list = self.scenario_listbox.GetItems()
+				item_list[index + 1], item_list[index] = item_list[index], item_list[index + 1]
+				self.scenario_listbox.SetItems(item_list)
+				
+				# change selected item
+				self.scenario_listbox.Select(index + 1)
 		pass
 	def OnActionAdd(self, event):
+		win = NewActionWindow(self);
+		win.ShowModal()
+		if win.result != None:
+			self.scenario.action_list.append(win.result)
+			self.scenario_listbox.Append(win.result.ToString())
 		pass
 	def OnActionRemove(self, event):
+		selections = self.scenario_listbox.GetSelections()
+		if len(selections) > 0:
+			for sizer in self.editarea_sizer_list:
+				sizer.ShowItems(False)
+			action = self.scenario.action_list[selections[0]]
+			self.scenario.action_list.pop(selections[0])
+			self.scenario_listbox.Delete(selections[0])
+			if selections[0] > 0:
+				self.scenario_listbox.Select(selections[0] - 1)
+			
 		pass
 	def OnScenarioLoadSuccess(self):
-		self.scenario_listbox.Set(self.scenario.GetListboxArray())
+		self.RefreshList()
 		pass
+	def RefreshList(self):
+		for sizer in self.editarea_sizer_list:
+			sizer.ShowItems(False)
+		self.scenario_listbox.Set(self.scenario.GetListboxArray())
+		self.textctrl_scenario_uid.SetValue(self.scenario.uid)
 	def OnListboxSelectChanged(self, event):
 		selections = self.scenario_listbox.GetSelections()
 		for sizer in self.editarea_sizer_list:
@@ -202,6 +260,9 @@ class MainWindow(wx.Frame):
 		else:
 			print "no selections"
 		self.main_sizer.Layout()
+	def OnUidChanged(self, event):
+		self.scenario.uid = self.textctrl_scenario_uid.GetValue();
+		pass
 class ScenarioObject:
 	def __init__(self):
 		self.action_list = []
@@ -301,6 +362,9 @@ class ActionDefineActor(ScenarioAction):
 	def SaveElement(self, parent_element):
 		element = Element("def_actor", {"actor_id":self.actor_id, "actor_name":self.actor_name})
 		parent_element.append(element)
+	def CreateNew(self, actor_id, actor_name):
+		self.actor_id = actor_id
+		self.actor_name = actor_name
 class ActionDialog(ScenarioAction):
 	def LoadElement(self, element):
 		if "actor_id" in element.attrib:
@@ -310,15 +374,49 @@ class ActionDialog(ScenarioAction):
 		else:
 			return False
 	def ToString(self):
-		return "[dialog] actor_id: {0}, text: {1}:".format(self.actor_id, self.text)
+		return "[dialog] actor_id: {0}, text: {1}".format(self.actor_id, self.text)
 	def SaveElement(self, parent_element):
 		element = Element("dialog", {"actor_id":self.actor_id})
 		element.text = self.text
 		parent_element.append(element)
+	def CreateNew(self, actor_id, text):
+		self.actor_id = actor_id
+		self.text = text
 class ActionSet(ScenarioAction):
 	def __init__(self):
 		pass
-	
+
+class NewActionWindow(wx.Dialog):
+	def __init__(self, parent):
+		wx.Dialog.__init__(self, parent, size = (320,420), title = "Add New Action")
+		panel = wx.Panel(self)
+		sizer = wx.GridSizer(rows = 5, cols = 3, vgap = 5, hgap = 5)
+		
+		btn_actordef = wx.Button(panel, label = "Actor Define")
+		btn_dialogue = wx.Button(panel, label = "Dialogue")
+		btn_set = wx.Button(panel, label = "Action Set")
+		
+		sizer.Add(btn_actordef)
+		sizer.Add(btn_dialogue)
+		sizer.Add(btn_set)
+		
+		panel.SetSizer(sizer)
+		
+		self.Bind(wx.EVT_BUTTON, self.OnBtnActorDef, btn_actordef )
+		self.Bind(wx.EVT_BUTTON, self.OnBtnDialogue, btn_dialogue )
+		self.Bind(wx.EVT_BUTTON, self.OnBtnSet, btn_set )
+	def OnBtnActorDef(self, event):
+		self.result = ActionDefineActor()
+		self.result.CreateNew("-1","noname")
+		self.Close()
+	def OnBtnDialogue(self, event):
+		self.result = ActionDialog()
+		self.result.CreateNew("-1","no text")
+		self.Close()
+		pass
+	def OnBtnSet(self, event):
+		self.Close()
+		pass	
 app = wx.App(False)
 frame = MainWindow(None,"Ahaworks Scenario Script Editor")
 app.MainLoop()
