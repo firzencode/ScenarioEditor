@@ -1,6 +1,5 @@
 import wx, os
 from scenario import *
-from scenario import ScenarioObject
 
 class EditorWindow(wx.Frame):
     def __init__(self, parent, title):
@@ -300,22 +299,28 @@ class EditorController:
 class NewActionWindow(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, size = (320,420), title = "Add New Action")
+        
+        self.result = None
+        
         panel = wx.Panel(self)
-        sizer = wx.GridSizer(rows = 5, cols = 3, vgap = 5, hgap = 5)
+        sizer = wx.GridSizer(rows = 10, cols = 3, vgap = 5, hgap = 5)
         
         btn_actordef = wx.Button(panel, label = "Actor Define")
         btn_dialogue = wx.Button(panel, label = "Dialogue")
-        btn_set = wx.Button(panel, label = "Action Set")
+        btn_setstart = wx.Button(panel, label = "Set Start")
+        btn_setend = wx.Button(panel, label = "Set End")
         
         sizer.Add(btn_actordef)
         sizer.Add(btn_dialogue)
-        sizer.Add(btn_set)
+        sizer.Add(btn_setstart)
+        sizer.Add(btn_setend)
         
         panel.SetSizer(sizer)
         
         self.Bind(wx.EVT_BUTTON, self.OnBtnActorDef, btn_actordef )
         self.Bind(wx.EVT_BUTTON, self.OnBtnDialogue, btn_dialogue )
-        self.Bind(wx.EVT_BUTTON, self.OnBtnSet, btn_set )
+        self.Bind(wx.EVT_BUTTON, self.OnBtnSetStart, btn_setstart )
+        self.Bind(wx.EVT_BUTTON, self.OnBtnSetEnd, btn_setend )
     def OnBtnActorDef(self, event):
         self.result = ActionDefineActor()
         self.result.CreateNew("-1","noname")
@@ -324,5 +329,9 @@ class NewActionWindow(wx.Dialog):
         self.result = ActionDialog()
         self.result.CreateNew("-1","no text")
         self.Close()
-    def OnBtnSet(self, event):
+    def OnBtnSetStart(self, event):
+        self.result = ActionSetStart()
+        self.Close()
+    def OnBtnSetEnd(self, event):
+        self.result = ActionSetEnd()
         self.Close()
